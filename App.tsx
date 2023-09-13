@@ -1,118 +1,137 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import { View, Text, StyleSheet, TextInput, Button, Alert, FlatList, ScrollView } from 'react-native'
+import React, { useState } from 'react'
+import TaskInput from './components/TaskInput';
+import TaskList from './components/TaskList';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const App = () => {
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  const [getText, setText] = useState('');
+  const [getTask, setTask] = useState<string[]>([]);
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+  const onSubmit = () => {
 
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+    if (getText.length == 0) {
+      console.warn('PLease enter the text')
+    } else {
 
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+      setTask((currentTask) => [...currentTask, getText]);
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+      setText('')
+
+    }
+
+
+  }
+
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+    <View style={styles.container}>
+
+
+      {/* <View > */}
+
+
+      {/* to  give multiple style */}
+
+      {/* <Text style={[styles.textBack, { borderRadius: 20, backgroundColor: 'red', color: 'white' }]}>Hello World!</Text> */}
+      {/* </View> */}
+
+
+      {/* <View > */}
+      {/* <Text style={[styles.textBack]}>Hello World!</Text> */}
+      {/* </View> */}
+
+
+      {/* 
+      <View style={styles.header}>
+        <TextInput placeholder='Enter tasks' style={styles.inputText} onChangeText={(text) => { setText(text) }} value={getText}
+        />
+        <Button
+          title='Add Task'
+          onPress={() => {
+            onSubmit()
+          }} />
+      </View> */}
+
+      <TaskInput setText={setText} getText={getText} onSubmit={onSubmit} />
+
+      <View style={{ flex: 3 }}>
+
+
+        {/* static list but in this case styles will not apply to iphone
+          due to text style(border radius) in react is not same for android and ios
+          to solve it wrap the text into view and apply style into view */}
+
+        {/* {getTask.map((task) => (
+          <Text style={styles.listText}>{task}</Text>
+        ))} */}
+
+
+
+        <FlatList
+          style={{ paddingTop: 20, paddingHorizontal: 10 }}
+          data={getTask}
+          //if item is wrapped into {item} like this than it will directly return the text no the object
+          renderItem={(item) =>  //in this case it will return the objects 
+            <TaskList text={item.item} />}
+        />
+
+
+
+        {/* always write scrolls inside a view to resolve the spacing issue */}
+        {/* <ScrollView alwaysBounceVertical={true}>
+
+
+          {getTask.map((task) => (
+            <View style={styles.listText}>
+              <Text style={{ color: 'white' }} >{task}</Text>
+            </View>
+          ))}
+        </ScrollView> */}
+
+      </View>
+
+    </View >
+  )
 }
+
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
-export default App;
+  container: {
+    flex: 1,
+    padding: 15,
+  },
+
+  header: {
+    flex: 1,  //allows the view to cover particular area
+    flexDirection: 'row',
+    //its stretches the view based on the direction of the flex
+    alignItems: 'center',   //used to change the alignment on the cross-axis ,its default value is "stretched s"
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: '#cccccc',
+  },
+
+  inputText: {
+    borderWidth: 1,
+    borderColor: '#cccccc',
+    width: '70%',
+    marginRight: 7,
+    padding: 10,
+  },
+
+  listText: {
+
+    backgroundColor: '#8D3DAF',
+    marginVertical: 20,
+    color: 'white',
+    padding: 15,
+    borderRadius: 10
+    // textAlign: 'center', // Center horizontally
+    // textAlignVertical: 'center', // Center vertically
+  }
+
+})
+
+export default App
