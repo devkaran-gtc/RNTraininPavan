@@ -1,85 +1,96 @@
-import { View, Text, StyleSheet, TextInput, Button, Alert, FlatList, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Button, Alert, FlatList, ScrollView, StatusBar } from 'react-native'
 import React, { useState } from 'react'
 import TaskInput from './components/TaskInput';
 import TaskList from './components/TaskList';
 
+
+interface Task {
+  text: string;
+  id: string;
+}
+
 const App = () => {
 
   const [getText, setText] = useState('');
-  const [getTask, setTask] = useState<string[]>([]);
+  const [getTask, setTask] = useState<Task[]>([]);
+  const [getModal, setModal] = useState(false)
 
   const onSubmit = () => {
-
-    if (getText.length == 0) {
-      console.warn('PLease enter the text')
+    if (getText.length === 0) {
+      console.warn('Please enter the text');
     } else {
-
-      setTask((currentTask) => [...currentTask, getText]);
-
-      setText('')
-
+      const newTask: Task = { text: getText, id: Math.random().toString() };
+      setTask((currentTasks) => [...currentTasks, newTask]);
+      setText('');
+      setModal(false)
     }
+  };
 
 
+
+  const onDelete = (id: string) => {
+    setTask((getTask) => (
+      getTask.filter((list) => list.id !== id)
+    ))
+  }
+
+  const onCancel = () => {
+    setModal(false)
   }
 
 
   return (
-    <View style={styles.container}>
+    <>
+      <StatusBar barStyle={'light-content'} />
+      <View style={styles.container}>
 
 
-      {/* <View > */}
+        {/* <View > */}
 
 
-      {/* to  give multiple style */}
+        {/* to  give multiple style */}
 
-      {/* <Text style={[styles.textBack, { borderRadius: 20, backgroundColor: 'red', color: 'white' }]}>Hello World!</Text> */}
-      {/* </View> */}
-
-
-      {/* <View > */}
-      {/* <Text style={[styles.textBack]}>Hello World!</Text> */}
-      {/* </View> */}
+        {/* <Text style={[styles.textBack, { borderRadius: 20, backgroundColor: 'red', color: 'white' }]}>Hello World!</Text> */}
+        {/* </View> */}
 
 
-      {/* 
-      <View style={styles.header}>
-        <TextInput placeholder='Enter tasks' style={styles.inputText} onChangeText={(text) => { setText(text) }} value={getText}
-        />
-        <Button
-          title='Add Task'
-          onPress={() => {
-            onSubmit()
-          }} />
-      </View> */}
-
-      <TaskInput setText={setText} getText={getText} onSubmit={onSubmit} />
-
-      <View style={{ flex: 3 }}>
+        {/* <View > */}
+        {/* <Text style={[styles.textBack]}>Hello World!</Text> */}
+        {/* </View> */}
 
 
-        {/* static list but in this case styles will not apply to iphone
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 50, padding: 10 }}>
+          <Text style={{ fontSize: 20, color: 'white' }}>Task Tracker</Text>
+          <Button title='Add Task' color='#8D3DAF' onPress={() => setModal(true)} />
+        </View>
+
+        {getModal && <TaskInput isVisible={getModal} setText={setText} getText={getText} onSubmit={onSubmit} onCancel={onCancel} />}
+
+        <View style={{ flex: 3 }}>
+
+          {/* static list but in this case styles will not apply to iphone
           due to text style(border radius) in react is not same for android and ios
           to solve it wrap the text into view and apply style into view */}
 
-        {/* {getTask.map((task) => (
+          {/* {getTask.map((task) => (
           <Text style={styles.listText}>{task}</Text>
         ))} */}
 
 
 
-        <FlatList
-          style={{ paddingTop: 20, paddingHorizontal: 10 }}
-          data={getTask}
-          //if item is wrapped into {item} like this than it will directly return the text no the object
-          renderItem={(item) =>  //in this case it will return the objects 
-            <TaskList text={item.item} />}
-        />
+          <FlatList
+            style={{ paddingVertical: 20, paddingHorizontal: 10 }}
+            data={getTask}
+            //if item is wrapped into {item} like this than it will directly return the text no the object
+            renderItem={(item) =>  //in this case it will return the objects 
+              <TaskList onDelete={onDelete} text={item.item.text} id={item.item.id} /> // Pass the id
+            }
+          />
 
 
 
-        {/* always write scrolls inside a view to resolve the spacing issue */}
-        {/* <ScrollView alwaysBounceVertical={true}>
+          {/* always write scrolls inside a view to resolve the spacing issue */}
+          {/* <ScrollView alwaysBounceVertical={true}>
 
 
           {getTask.map((task) => (
@@ -89,9 +100,10 @@ const App = () => {
           ))}
         </ScrollView> */}
 
-      </View>
+        </View>
 
-    </View >
+      </View >
+    </>
   )
 }
 
@@ -101,6 +113,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 15,
+    backgroundColor: '#120E43'
   },
 
   header: {
