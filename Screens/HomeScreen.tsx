@@ -10,7 +10,7 @@ const HomeScreen = () => {
     return (
         <Button
             title="Go to Settings"
-            onPress={() => console.log("Hello")}
+            onPress={() => navigation.navigate('SettingsScreen')}
         />
     );
 };
