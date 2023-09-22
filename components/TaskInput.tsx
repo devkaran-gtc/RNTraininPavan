@@ -21,7 +21,7 @@ const TaskInput = (props: inputProps) => {
             <View style={styles.header}>
 
                 <View style={{ alignItems: 'center' }}>
-                    <Image source={require('./images/goal.png')} style={styles.image} />
+                    <Image source={require('../images/goal.png')} style={styles.image} />
                 </View>
                 <TextInput placeholder='Enter tasks' style={styles.inputText} onChangeText={(text) => { props.setText(text) }} value={props.getText} />
 
